@@ -37,7 +37,7 @@
             <mat-list dense>
               <mat-list-item *ngFor="let e of element.employees">
                     <a [routerLink]="['/emploee/', e.id]">{{e.fullName}}</a>
-                    <buttom mat-flat-button (click)="remove(e.id)"> удалть </buttom>
+                    <button mat-flat-button (click)="remove(e.id)"> удалть </button>
               </mat-list-item>
             </mat-list>            
         </mat-cell>
