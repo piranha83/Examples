@@ -8,7 +8,7 @@ namespace App.Repositories
     {        
         Task<TEntity> Find(TKey id);
         Task<IList<TEntity>> Find();
-        TKey Add(TEntity entity);
+        void Add(TEntity entity);
         void Update(TEntity entity);
         void Delete(TKey id);
     }

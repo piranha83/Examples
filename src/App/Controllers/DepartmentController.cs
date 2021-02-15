@@ -12,7 +12,7 @@ namespace App.Controllers
 {
     [ApiController]
     [ValidateModel]
-    [Route("[controller]")]    
+    [Route("api/[controller]")]    
     public class DepartmentController
     {
         readonly IRepository<Department> _departmentRepository;

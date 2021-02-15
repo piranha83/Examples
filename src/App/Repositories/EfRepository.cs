@@ -29,10 +29,9 @@ namespace App.Repositories
             return await _dbSet.AsNoTracking().ToListAsync();
         }
 
-        public virtual TKey Add(TEntity entity)
+        public virtual void Add(TEntity entity)
         {
            _dbSet.Add(entity);
-           return entity.Id;
         }
 
         public virtual void Update(TEntity entity)

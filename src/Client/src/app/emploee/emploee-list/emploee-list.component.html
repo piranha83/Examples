@@ -1,0 +1,49 @@
+<header class="header"><h1>Средняя зарплата сотрудников отдела</h1></header>
+<a mat-flat-button [routerLink]="['/emploee/', -1]"> Добавить сотрудника </a>
+<mat-table [dataSource]="model" multiTemplateDataRows>
+    <!--
+    <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.id }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="fullName">
+        <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.fullName }} </mat-cell>
+    </ng-container>
+    
+    <ng-container matColumnDef="salary">
+        <mat-header-cell *matHeaderCellDef> Salary </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.salary }} </mat-cell>
+    </ng-container>
+    -->
+    <ng-container matColumnDef="departmentName">
+        <mat-header-cell *matHeaderCellDef> Отдел </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.departmentName }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="averageSalary">
+        <mat-header-cell *matHeaderCellDef> Ср. зарплпта </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.averageSalary }} </mat-cell>
+    </ng-container>
+    
+    <ng-container matColumnDef="employeesCount">
+        <mat-header-cell *matHeaderCellDef> Сотрудников </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.employeesCount }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="expandedDetail">
+        <mat-cell *matCellDef="let element">        
+            <mat-list dense>
+              <mat-list-item *ngFor="let e of element.employees">
+                    <a [routerLink]="['/emploee/', e.id]">{{e.fullName}}</a>
+                    <buttom mat-flat-button (click)="remove(e.id)"> удалть </buttom>
+              </mat-list-item>
+            </mat-list>            
+        </mat-cell>
+    </ng-container>
+    
+    <mat-header-row *matHeaderRowDef="schema"></mat-header-row>
+    <mat-row *matRowDef="let row; columns:schema"></mat-row>
+    <mat-row *matRowDef="let element; columns: ['expandedDetail']"></mat-row>
+</mat-table>

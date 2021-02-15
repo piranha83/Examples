@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using App.Extensions;
@@ -7,12 +6,13 @@ using App.Models;
 using App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using App.Maps;
 
 namespace App.Controllers
 {
     [ApiController]
-    [ValidateModel]    
-    [Route("[controller]")]
+    [ValidateModel]
+    [Route("api/[controller]")]
     public class EmployeeController
     {
         readonly IRepository<Employee> _employeeRepository;
@@ -61,13 +61,10 @@ namespace App.Controllers
                 EmployeesCount = m.Count(m=>m.Salary.HasValue),
                 Employees = m.Select(m=>m.EmployeeName)
             }); OR */ 
-            var data = await _departmentRepository.AsQueryable().Include(m=>m.Employees).Select(m=> new DepartmentSalarySummary 
-            {          
-                DepartmentName = m.Name,
-                AverageSalary = Math.Round(m.Employees.Average(m=>m.Salary), 2),
-                EmployeesCount = m.Employees.Count(),
-                Employees = m.Employees.Select(m=>m.FirstName + m.LastName)
-            }).ToListAsync();            
+            var data = await _departmentRepository.AsQueryable()
+                .Include(m=>m.Employees)
+                .Select(m=>Map.MapDepartmentSalarySummary(m))
+                .ToListAsync();            
 
             return new JsonResult(data);
         }
@@ -77,10 +74,10 @@ namespace App.Controllers
         {
             _employeeRepository.Add(data);
             await _session.Save();
-            return new JsonResult(data.Id);
+            return new JsonResult(data);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, Employee data)
         {
             data.Id = id;
@@ -89,7 +86,7 @@ namespace App.Controllers
             return new JsonResult(data);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             _employeeRepository.Delete(id);

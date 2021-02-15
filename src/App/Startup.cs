@@ -67,11 +67,13 @@ namespace App
             /*if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();*/
 
-            app.UseSwagger().UseSwaggerUI(c =>
+            app.UseDefaultFiles().UseStaticFiles()
+            .UseSwagger().UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sklyarov API V1");
                 c.RoutePrefix = string.Empty;
             })
+            //.UseCors(c => c.WithOrigins(Configuration.GetValue<string>("Cors")))
             .UseCors("CorsPolicy")
             .UseRouting()
             .UseEndpoints(endpoints =>
