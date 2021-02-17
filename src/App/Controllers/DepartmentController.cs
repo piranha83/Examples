@@ -6,10 +6,12 @@ using App.Extensions;
 using App.Filters;
 using App.Models;
 using App.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Controllers
 {
+    [Authorize]
     [ApiController]
     [ValidateModel]
     [Route("api/[controller]")]    
@@ -23,6 +25,7 @@ namespace App.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Get()
         {
             var data = await _departmentRepository.Find();            
@@ -30,6 +33,7 @@ namespace App.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Get(int id)
         {
             var data = await _departmentRepository.Find(id);

@@ -7,6 +7,7 @@ namespace App.Validators
     {
         public DepartmentValidator()
         {
+            RuleFor(m => m).NotNull();
             RuleFor(m=>m.Name).Length(1, 32);            
         }
     }

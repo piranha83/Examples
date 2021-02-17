@@ -7,9 +7,11 @@ using App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.Maps;
+using Microsoft.AspNetCore.Authorization;
 
 namespace App.Controllers
 {
+    [Authorize]
     [ApiController]
     [ValidateModel]
     [Route("api/[controller]")]
@@ -29,6 +31,7 @@ namespace App.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Get()
         {
             var data = await _employeeRepository.Find();            
@@ -36,6 +39,7 @@ namespace App.Controllers
         }        
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Get(int id)
         {
             var data = await _employeeRepository.Find(id);

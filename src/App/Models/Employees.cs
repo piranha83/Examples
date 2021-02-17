@@ -14,6 +14,6 @@ namespace App.Models
 
         [XmlIgnore, JsonIgnore]
         public virtual Department Department { get; set; }
-        public int? DepartmentId { get; set; }  
+        public int? DepartmentId { get; set; }
     }  
 }
