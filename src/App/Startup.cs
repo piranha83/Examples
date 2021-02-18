@@ -16,7 +16,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 
 namespace App
 {
@@ -99,10 +100,12 @@ namespace App
             _serviceProvider = app.ApplicationServices;
             /*if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();*/
-                app.UseDeveloperExceptionPage();
+            app.UseDeveloperExceptionPage();
+            app.UseDefaultFiles().UseStaticFiles();
+            if (!env.IsDevelopment())
+                app.UseSpaStaticFiles();
 
-            app.UseDefaultFiles().UseStaticFiles()
-            .UseSwagger().UseSwaggerUI(c =>
+            app.UseSwagger().UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sklyarov API V1");
                 c.RoutePrefix = string.Empty;
@@ -118,7 +121,13 @@ namespace App
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/hc");
             })
-            .Migrate<ApplicationDbContext>(ApplicationDbContext.Seed);                 
+            .Migrate<ApplicationDbContext>(ApplicationDbContext.Seed)
+            .UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+                if (env.IsDevelopment())
+                    spa.UseAngularCliServer(npmScript: "start");
+            });                
         }
     }
 }
