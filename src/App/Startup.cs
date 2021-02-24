@@ -51,9 +51,10 @@ namespace App
                     ValidateAudience = true,
                     ValidAudience = Configuration.GetValue<string>("Client"),
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromDays(5)
+                    ClockSkew = TimeSpan.FromDays(2)
                 };                                
             });
+            services.AddDistributedMemoryCache();
                         
             // HttpContextServiceProviderValidatorFactory requires access to HttpContext
             services.AddHttpContextAccessor();
@@ -78,7 +79,8 @@ namespace App
                 .AddScoped(typeof(ISession), typeof(EfSession<ApplicationDbContext>))
                 .AddScoped(typeof(IRepository<>), typeof(EfRepository<>))
                 .AddSingleton(typeof(IIdentityRepository), typeof(IdentityRepository))
-                .AddSingleton(typeof(IIdentityService), typeof(JwtService))                
+                .AddSingleton(typeof(IIdentityService), typeof(JwtService))
+                .AddSingleton<SecurityKey>(new SymmetricSecurityKey(key))
                 .AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Sklyarov API", Version = "v1" });
@@ -90,8 +92,10 @@ namespace App
                     Configuration.GetConnectionString("DefaultConnection"),
                     name: "db-check",
                     tags: new string[] { "master" }); 
-
-            services.AddSingleton<SecurityKey>(new SymmetricSecurityKey(key));                  
+            
+            services.AddSpaStaticFiles(options => {
+                options.RootPath = "ClientApp/dist";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,16 +105,16 @@ namespace App
             /*if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();*/
             app.UseDeveloperExceptionPage();
-            app.UseDefaultFiles().UseStaticFiles();
+            app.UseDefaultFiles().UseStaticFiles();//wwwroot
             if (!env.IsDevelopment())
-                app.UseSpaStaticFiles();
+                app.UseSpaStaticFiles();//ClientApp
 
             app.UseSwagger().UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sklyarov API V1");
                 c.RoutePrefix = string.Empty;
             })
-            .UseCors(x => x
+            .UseCors(x => x.AllowAnyHeader()
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader())
@@ -123,11 +127,15 @@ namespace App
             })
             .Migrate<ApplicationDbContext>(ApplicationDbContext.Seed)
             .UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-                if (env.IsDevelopment())
-                    spa.UseAngularCliServer(npmScript: "start");
-            });                
+            {                
+                spa.Options.SourcePath = "ClientApp";                
+                if(Configuration["INDOCKER"] == "1") {
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                }
+                else {
+                    spa.UseAngularCliServer(npmScript: "start");                
+                }
+            });
         }
     }
 }

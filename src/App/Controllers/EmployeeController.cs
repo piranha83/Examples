@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.Maps;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Caching.Distributed;
+using System;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace App.Controllers
 {
@@ -20,21 +23,27 @@ namespace App.Controllers
         readonly IRepository<Employee> _employeeRepository;
         readonly IRepository<Department> _departmentRepository;
         readonly ISession _session;
+        readonly IDistributedCache _cache;
 
-        public EmployeeController(IRepository<Employee> employeeRepository,
-        IRepository<Department> departmentRepository,
-        ISession session)
-        {
+        public EmployeeController(
+            IRepository<Employee> employeeRepository,
+            IRepository<Department> departmentRepository,
+            ISession session,
+            IDistributedCache cache)
+        {           
             _employeeRepository = employeeRepository;
             _departmentRepository = departmentRepository;
             _session = session;
+            _cache = cache;
         }
 
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> Get()
         {
-            var data = await _employeeRepository.Find();            
+            var data = await _employeeRepository.Find();  
+            if(data == null) 
+                new NotFoundResult();          
             return new JsonResult(data);
         }        
 
@@ -43,9 +52,12 @@ namespace App.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var data = await _employeeRepository.Find(id);
+            if(data == null)
+                new NotFoundResult();
             return new JsonResult(data);
         }
         
+        [AllowAnonymous]
         [HttpGet]
         [Route("Department/AvgSalarySummary")]
         public async Task<IActionResult> DepartmentAvgSalary()
@@ -64,12 +76,14 @@ namespace App.Controllers
                 AverageSalary = Math.Round(m.Average(m=>m.Salary).GetValueOrDefault(), 2),
                 EmployeesCount = m.Count(m=>m.Salary.HasValue),
                 Employees = m.Select(m=>m.EmployeeName)
-            }); OR */ 
-            var data = await _departmentRepository.AsQueryable()
-                .Include(m=>m.Employees)
-                .Select(m=>Map.MapDepartmentSalarySummary(m))
-                .ToListAsync();            
-
+            }); OR */
+            var data = await _cache.GetOrCreateAsync(nameof(DepartmentAvgSalary), () => 
+            {
+                return _departmentRepository.AsQueryable()
+                    .Include(m=>m.Employees)
+                    .Select(m=>Map.MapDepartmentSalarySummary(m))
+                    .ToListAsync();
+            }, TimeSpan.FromHours(8));            
             return new JsonResult(data);
         }
 
@@ -78,6 +92,7 @@ namespace App.Controllers
         {
             _employeeRepository.Add(data);
             await _session.Save();
+            await _cache.RemoveAsync(nameof(DepartmentAvgSalary));
             return new JsonResult(data);
         }
 
@@ -87,6 +102,7 @@ namespace App.Controllers
             data.Id = id;
             _employeeRepository.Update(data);
             await _session.Save();
+            await _cache.RemoveAsync(nameof(DepartmentAvgSalary));
             return new JsonResult(data);
         }
 
@@ -95,6 +111,7 @@ namespace App.Controllers
         {
             _employeeRepository.Delete(id);
             await _session.Save();
+            await _cache.RemoveAsync(nameof(DepartmentAvgSalary));
             return new JsonResult(true);
         }
     }

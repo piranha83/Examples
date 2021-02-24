@@ -14,9 +14,7 @@ namespace App.Repositories
 
         public virtual Identity Find(string login, string password)
         {           
-            return _identity.FirstOrDefault(m=> 
-                m.Login.ToUpper().Contains(login.ToUpper()) 
-                    && m.Password.ToUpper().Contains(password.ToUpper())); 
+            return _identity.FirstOrDefault(m=> m.Login.ToUpper() == login.ToUpper() && m.Password == password); 
         }
     }
 }

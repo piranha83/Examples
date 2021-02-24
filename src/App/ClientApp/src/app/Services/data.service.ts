@@ -102,4 +102,28 @@ export class DataService {
             
         ]);
     }
+
+    public async GetLoginSchema(): Promise<FormlyFieldConfig[]> {
+        return await Promise.resolve([          
+          {
+              key: 'login',
+              type: 'input',
+              templateOptions: {
+                  type: 'text',
+                  label: 'Логин',
+                  maxlength: 10,
+                  required: true,
+              },              
+          },
+          {
+              key: 'password',
+              type: 'input',
+              templateOptions: {
+                  type: 'text',
+                  label: 'Пароль',
+                  required: true,
+              },              
+          }                 
+      ]);
+    }
 }

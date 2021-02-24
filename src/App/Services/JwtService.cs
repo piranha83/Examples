@@ -77,7 +77,7 @@ namespace App.Services
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["TokenKey"]);
-            var expires = DateTime.Now.AddMinutes(20);
+            var expires = DateTime.UtcNow.AddMinutes(20);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
@@ -85,7 +85,9 @@ namespace App.Services
                     new Claim(ClaimTypes.Name, login)
                 }),
                 Expires = expires,
-                SigningCredentials = new SigningCredentials(_key, _securityAlgorithms)
+                SigningCredentials = new SigningCredentials(_key, _securityAlgorithms),
+                Audience = _configuration["Client"],
+                Issuer = _configuration["JwtServer"]
             };
             var token = tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
             var refresh = remember ? CreateRefresh(login) : string.Empty;
@@ -94,7 +96,7 @@ namespace App.Services
             {
                 token = token,
                 userName = login,
-                expiresToken = (expires - DateTime.Now).TotalMinutes,
+                expiresToken = (expires - DateTime.UtcNow).TotalMinutes,
                 refresh = refresh
             };
         }

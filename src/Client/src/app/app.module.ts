@@ -21,13 +21,15 @@ import { MatNativeDateModule } from '@angular/material/core'
 import { MatTableModule } from '@angular/material/table';
 import {MatListModule} from '@angular/material/list';
 import { EmploeeFormComponent, EmploeeListComponent } from './emploee'
-import { AppConfig } from './app.config'
+import { AppConfig } from './app.config';
+import { LoginComponent } from './login/login.component'
 
 @NgModule({
     declarations: [
         AppComponent,
         EmploeeListComponent,
         EmploeeFormComponent,
+        LoginComponent,
     ],
     imports: [
         BrowserModule,

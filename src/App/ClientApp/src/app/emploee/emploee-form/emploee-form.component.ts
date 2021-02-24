@@ -1,20 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DataService, FormService } from 'src/app/Services';
+import { JwtService } from 'src/app/login';
+import { DataService, FormService } from 'src/app/services';
 
 @Component({
   selector: 'app-emploee-form',
   templateUrl: './emploee-form.component.html',
+  providers: [ FormService ],
   styles: ['']
 })
 export class EmploeeFormComponent implements OnInit {
     public id: any = null;
+    public isAuth: boolean;
 
     constructor(
       public formService: FormService,
       private dataService: DataService,
       private route: ActivatedRoute,
-      private router: Router) {        
+      private router: Router,
+      private jwtService: JwtService) {   
+        this.isAuth = jwtService.IsAuth;     
         this.route.params.subscribe(params => { 
           this.id = params?.id > -1 ? params?.id : null; 
           //this.departmentId = params?.departmentId ?? -1; 
@@ -34,8 +39,13 @@ export class EmploeeFormComponent implements OnInit {
     public async onSubmit(model: any): Promise<void> {
       if (this.formService.form.valid != true) return;
       var result = await this.dataService.SaveEmploee(model)
-        .catch(ex => this.formService.setErrors(ex?.error?.errors));
-      if(result.id > -1)
-        this.dataService.GetEmploee(result.id)
+        .catch(ex => {
+           this.formService.setErrors(ex?.error?.errors || ex);
+           alert('Не удалось сохранить');
+        });
+      if(result && result.id > -1) {
+        alert('Сохранено');
+        this.router.navigate(['emploee']);
+      }
     }
 }

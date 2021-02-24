@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { EmploeeFormComponent, EmploeeListComponent } from './emploee';
+import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
   {
@@ -12,13 +14,21 @@ const routes: Routes = [
       component: EmploeeFormComponent,
   },
   {
+    path: 'home',
+    component: HomeComponent,
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
+  },
+  {
     path: '**',
-    redirectTo: 'emploee',
+    redirectTo: 'login', 
   }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { useHash: false })],
   exports: [RouterModule],
   providers: [], 
 })

@@ -1,5 +1,7 @@
 <header class="header"><h1>Средняя зарплата сотрудников отдела</h1></header>
-<a mat-flat-button [routerLink]="['/emploee/', -1]"> Добавить сотрудника </a>
+<ng-container *ngIf="isAuth">
+    <a mat-flat-button [routerLink]="['/emploee/', -1]"> Добавить сотрудника </a>
+</ng-container>
 <mat-table [dataSource]="model" multiTemplateDataRows>
     <!--
     <ng-container matColumnDef="id">
@@ -36,8 +38,10 @@
         <mat-cell *matCellDef="let element">        
             <mat-list dense>
               <mat-list-item *ngFor="let e of element.employees">
-                    <a [routerLink]="['/emploee/', e.id]">{{e.fullName}}</a>
-                    <button mat-flat-button (click)="remove(e.id)"> удалть </button>
+                    <a name="{{e.id}}" [routerLink]="['/emploee/', e.id]">{{e.fullName}}</a>
+                    <ng-container *ngIf="isAuth">
+                        <button mat-flat-button (click)="remove(e.id)"> удалть </button>
+                    </ng-container>
               </mat-list-item>
             </mat-list>            
         </mat-cell>

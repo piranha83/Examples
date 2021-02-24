@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { JwtService } from 'src/app/login';
+import { DataService } from 'src/app/services';
 import { EmploeeModel } from '../emploee.model';
-import { DataService } from '../../Services/data.service';
-import { FormlyFieldConfig } from '@ngx-formly/core';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-emploee-list',
@@ -13,8 +13,14 @@ export class EmploeeListComponent implements OnInit {
     //public schema: string[] = ['id', 'fullName', 'salary', 'actions']
     public schema: any[] = [];
     public model: EmploeeModel[] = []
+    public isAuth: boolean;
+    public pageIndex: number = 1;
 
-    constructor(public dataService: DataService) {}
+    constructor(
+      public dataService: DataService, 
+      jwtService: JwtService) {
+        this.isAuth = jwtService.IsAuth;
+      }
 
     async ngOnInit(): Promise<void> {
       console.log('ListComponent');
