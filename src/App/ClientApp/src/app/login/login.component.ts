@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormService } from '../services';
+import { FormService } from 'src/app/services';;
 import { JwtService } from './jwt.service';
 
 @Component({
@@ -26,7 +26,7 @@ export class LoginComponent {
 
   public async onSubmit(model: any): Promise<void> {
     if (this.formService.form.valid != true) return;
-    if(await this.dataService.Login(model).catch(ex => this.error()))
+    if(await this.dataService.Login(model).catch((ex: any) => this.error()))
     {
       this.router.navigate(['emploee']);
     } else {

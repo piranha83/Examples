@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EmploeeModel } from '../emploee.model';
-import { DataService } from '../../Services/data.service';
+import { DataService } from 'src/app/services';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { Router } from '@angular/router';
 
@@ -22,13 +22,13 @@ export class EmploeeListComponent implements OnInit {
         this.dataService.GetDepartmentAvgSalarySchema(),
         this.dataService.GetDepartmentAvgSalary()
       ]);
-      this.schema = schema.map(m=>m.key);
+      this.schema = schema.map((m:any)=>m.key);
       this.model = model;      
     }
 
     async remove(id:number) {
       if(confirm('Удалить сотрудника?')) {
-        let result = await this.dataService.DeleteEmploee(id).catch(ex => {
+        let result = await this.dataService.DeleteEmploee(id).catch((ex: any) => {
           console.log(ex);
           alert('Не удалось удалить');
         });

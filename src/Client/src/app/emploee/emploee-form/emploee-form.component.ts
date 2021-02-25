@@ -34,7 +34,7 @@ export class EmploeeFormComponent implements OnInit {
     public async onSubmit(model: any): Promise<void> {
       if (this.formService.form.valid != true) return;
       var result = await this.dataService.SaveEmploee(model)
-        .catch(ex => this.formService.setErrors(ex?.error?.errors));
+        .catch((ex: any) => this.formService.setErrors(ex?.error?.errors));
       if(result.id > -1)
         this.dataService.GetEmploee(result.id)
     }

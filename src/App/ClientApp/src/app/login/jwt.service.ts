@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { JwtModel } from '.';
-import { StorageService } from '../services';
+import { StorageService } from 'src/app/services';
 
 @Injectable({ providedIn: 'root' })
 export class JwtService {

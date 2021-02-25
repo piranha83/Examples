@@ -39,7 +39,7 @@ export class EmploeeFormComponent implements OnInit {
     public async onSubmit(model: any): Promise<void> {
       if (this.formService.form.valid != true) return;
       var result = await this.dataService.SaveEmploee(model)
-        .catch(ex => {
+        .catch((ex: any) => {
            this.formService.setErrors(ex?.error?.errors || ex);
            alert('Не удалось сохранить');
         });

@@ -28,13 +28,13 @@ export class EmploeeListComponent implements OnInit {
         this.dataService.GetDepartmentAvgSalarySchema(),
         this.dataService.GetDepartmentAvgSalary()
       ]);
-      this.schema = schema.map(m=>m.key);
+      this.schema = schema.map((m: any)=>m.key);
       this.model = model;      
     }
 
     async remove(id:number) {
       if(confirm('Удалить сотрудника?')) {
-        let result = await this.dataService.DeleteEmploee(id).catch(ex => {
+        let result = await this.dataService.DeleteEmploee(id).catch((ex: any) => {
           console.log(ex);
           alert('Не удалось удалить');
         });

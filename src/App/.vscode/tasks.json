@@ -14,6 +14,19 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "buildprod",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "-c", "Release",
+                "${workspaceFolder}/app.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "publish",
             "command": "dotnet",
             "type": "process",
