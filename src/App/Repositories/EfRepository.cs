@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using App.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Repositories
@@ -31,7 +32,10 @@ namespace App.Repositories
 
         public virtual void Add(TEntity entity)
         {
+            var st = _dbContext.Entry(entity).State;
+            _dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
            _dbSet.Add(entity);
+           _dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
         }
 
         public virtual void Update(TEntity entity)
@@ -48,6 +52,18 @@ namespace App.Repositories
         public virtual IQueryable<TEntity> AsQueryable()
         {
             return _dbSet.AsQueryable<TEntity>();
+        }
+
+        public virtual IQueryable<TEntity> IncludeAll(int maxDepth = int.MaxValue)
+        {
+            var result = this.AsQueryable();
+            var includePaths = _dbContext.GetNavigation<TEntity, TContext>(maxDepth);
+
+            foreach (var includePath in includePaths)
+            {
+                result = result.Include(includePath);
+            }            
+            return result.AsNoTracking();
         }
     }
 

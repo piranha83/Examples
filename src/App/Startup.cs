@@ -18,6 +18,9 @@ using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using AutoMapper;
+using App.Maps;
+using System.Reflection;
 
 namespace App
 {
@@ -59,6 +62,7 @@ namespace App
             // HttpContextServiceProviderValidatorFactory requires access to HttpContext
             services.AddHttpContextAccessor();
             services.AddControllers()
+                //.AddNewtonsoftJson()
                 // Adds fluent validators to Asp.net
                 .AddFluentValidation(options =>
                 {
@@ -93,6 +97,15 @@ namespace App
                     name: "db-check",
                     tags: new string[] { "master" }); 
             
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddMaps(typeof(Startup).GetTypeInfo().Assembly);                
+            });
+            mapperConfig.AssertConfigurationIsValid();
+
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
             services.AddSpaStaticFiles(options => {
                 options.RootPath = "ClientApp/dist";
             });
@@ -136,6 +149,6 @@ namespace App
                     spa.UseAngularCliServer(npmScript: "start");                
                 }
             });
-        }
+        } 
     }
 }

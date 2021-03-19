@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace App.Repositories
@@ -11,6 +12,7 @@ namespace App.Repositories
         void Add(TEntity entity);
         void Update(TEntity entity);
         void Delete(TKey id);
+        IQueryable<TEntity> IncludeAll(int maxDepth = int.MaxValue);
     }
 
     public interface IRepository<TEntity>: IRepository<TEntity, int>
